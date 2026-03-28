@@ -1,17 +1,21 @@
-import anthropic
-from app.config import ANTHROPIC_API_KEY
+# app/services/claude_client.py
+# We're replacing the Anthropic client with Gemini
+# Everything else in the project stays exactly the same
 
-client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+import google.generativeai as genai
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+model = genai.GenerativeModel("gemini-2.5-flash")
 
 def call_claude(system_prompt: str, user_message: str, max_tokens: int = 2000) -> str:
     """
-    Single function all agents use to call Claude.
-    Returns the text response as a plain string.
+    Same function signature as before — no other file needs to change.
+    Gemini combines system + user into one prompt.
     """
-    message = client.messages.create(
-        model="claude-opus-4-5",
-        max_tokens=max_tokens,
-        system=system_prompt,
-        messages=[{"role": "user", "content": user_message}]
-    )
-    return message.content[0].text
+    full_prompt = f"{system_prompt}\n\n{user_message}"
+    response = model.generate_content(full_prompt)
+    return response.text

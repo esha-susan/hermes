@@ -1,0 +1,23 @@
+ProductName: LaunchPad AI
+
+LaunchPad AI is a project management tool built for early-stage startups.
+It uses artificial intelligence to automatically prioritize tasks based on
+business impact and deadline urgency.
+
+Key Features:
+- AI-powered task prioritization
+- Integrates with Slack and GitHub
+- Real-time team velocity tracking
+- Weekly automated progress reports
+
+Technical Details:
+- Built on React and Node.js
+- REST API with WebSocket support
+- Hosted on AWS, 99.9% uptime SLA
+- SOC2 compliant data storage
+
+Target Audience: Startup founders and small engineering teams (2-15 people)
+who are overwhelmed by manual project tracking.
+
+Value Proposition: LaunchPad AI saves startup teams 5 hours per week by
+automating the planning overhead that slows down shipping.
