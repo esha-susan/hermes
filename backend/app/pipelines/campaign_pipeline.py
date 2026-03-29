@@ -1,12 +1,15 @@
 
+
 from app.agents.research_agent import run_research_agent
-from app.agents.copywriter_agent import run_copywriter_agent
+from app.agents.copywriter_agent import run_copywriter_agent, run_copywriter_revision
+from app.agents.editor_agent import run_editor_agent
 from app.services.supabase_client import supabase
+
+MAX_ITERATIONS = 2
 
 def run_campaign(campaign_id: str, source_text: str):
     try:
         _update_status(campaign_id, "researching")
-
         fact_sheet = run_research_agent(source_text)
 
         supabase.table("campaigns").update({
@@ -20,20 +23,65 @@ def run_campaign(campaign_id: str, source_text: str):
             "blog_post":     campaign_output.blog_post,
             "social_thread": campaign_output.social_thread,
             "email_teaser":  campaign_output.email_teaser,
-            "status":        "editing"   
+            "status":        "editing"
         }).eq("id", campaign_id).execute()
 
+       
+        iteration = 0
+
+        while iteration < MAX_ITERATIONS:
+            _update_status(campaign_id, "editing")
+
+            editor_report = run_editor_agent(fact_sheet, campaign_output)
+
+            supabase.table("campaigns").update({
+                "editor_notes":    _report_to_dict(editor_report),
+                "iteration_count": iteration + 1
+            }).eq("id", campaign_id).execute()
+
+            if editor_report.approved:
+                
+                break
+
+            if iteration + 1 >= MAX_ITERATIONS:
+                break
+
+            _update_status(campaign_id, "writing")
+
+            campaign_output = run_copywriter_revision(
+                fact_sheet=fact_sheet,
+                feedback=editor_report.feedback_for_copywriter or "",
+                issues=editor_report.issues
+            )
+
+            supabase.table("campaigns").update({
+                "blog_post":     campaign_output.blog_post,
+                "social_thread": campaign_output.social_thread,
+                "email_teaser":  campaign_output.email_teaser,
+            }).eq("id", campaign_id).execute()
+
+            iteration += 1
 
         _update_status(campaign_id, "done")
 
     except Exception as e:
         supabase.table("campaigns").update({
-            "status": "error",
+            "status":        "error",
             "error_message": str(e)
         }).eq("id", campaign_id).execute()
         raise
+
 
 def _update_status(campaign_id: str, status: str):
     supabase.table("campaigns").update(
         {"status": status}
     ).eq("id", campaign_id).execute()
+
+
+def _report_to_dict(report) -> dict:
+    return {
+        "approved":        report.approved,
+        "overall_quality": report.overall_quality,
+        "issues":          [i.model_dump() for i in report.issues],
+        "feedback":        report.feedback_for_copywriter
+    }
