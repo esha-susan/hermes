@@ -1,0 +1,165 @@
+/* src/pages/StartPage.module.css */
+
+.page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 40px 20px;
+  }
+  
+  /* Subtle dot grid background */
+  .grid {
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(14,165,233,0.08) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  
+  .container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 560px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+  }
+  
+  .header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--blue);
+    font-size: 13px;
+    letter-spacing: 0.15em;
+  }
+  
+  .tagline {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  
+  .headline {
+    font-size: clamp(36px, 6vw, 52px);
+    font-weight: 300;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+  }
+  
+  .sub {
+    font-size: 15px;
+    color: var(--text-secondary);
+    max-width: 420px;
+    line-height: 1.7;
+  }
+  
+  .dropzone {
+    width: 100%;
+    border: 1px dashed var(--border-default);
+    border-radius: 16px;
+    padding: 48px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s var(--ease);
+    background: var(--bg-card);
+  }
+  
+  .dropzone:hover {
+    border-color: var(--blue);
+    background: var(--bg-1);
+  }
+  
+  .dragging {
+    border-color: var(--blue);
+    background: var(--blue-dim);
+    transform: scale(1.01);
+  }
+  
+  .hasFile {
+    border-style: solid;
+    border-color: var(--blue);
+    background: var(--blue-dim);
+  }
+  
+  .dropPrompt, .fileSelected {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .dropText {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+  
+  .dropHint {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+  }
+  
+  .fileName {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--blue);
+    font-family: var(--font-mono);
+  }
+  
+  .fileSize {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+  }
+  
+  .error {
+    color: var(--red);
+    font-size: 13px;
+    font-family: var(--font-mono);
+  }
+  
+  .launchBtn {
+    width: 100%;
+    justify-content: center;
+    padding: 14px;
+    font-size: 15px;
+    border-radius: 10px;
+  }
+  
+  .launchBtn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  .outputs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .chip {
+    font-size: 11px;
+  }

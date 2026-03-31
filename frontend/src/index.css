@@ -1,25 +1,155 @@
 /* src/index.css */
-/* WHY: We define design tokens here as CSS variables.
-   Every component uses these — change one variable, the whole app updates. */
 
-   :root {
-    --bg-primary:    #0a0a0f;
-    --bg-secondary:  #12121a;
-    --bg-card:       #1a1a28;
-    --border:        #2a2a3d;
-    --accent-purple: #7c3aed;
-    --accent-cyan:   #06b6d4;
-    --accent-pink:   #ec4899;
-    --text-primary:  #f1f5f9;
-    --text-muted:    #94a3b8;
-    --glow-purple:   0 0 20px rgba(124, 58, 237, 0.3);
-  }
-  
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  
-  body {
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    font-family: 'Inter', system-ui, sans-serif;
-    min-height: 100vh;
-  }
+:root {
+  /* Base */
+  --bg-0: #050d1a;
+  --bg-1: #0a1628;
+  --bg-2: #0f1f38;
+  --bg-3: #1a2d4a;
+  --bg-card: #0d1b30;
+
+  /* Borders */
+  --border-subtle: rgba(255,255,255,0.06);
+  --border-default: rgba(255,255,255,0.1);
+  --border-strong: rgba(255,255,255,0.18);
+
+  /* Accents */
+  --blue:    #0ea5e9;
+  --blue-dim: rgba(14,165,233,0.15);
+  --blue-glow: rgba(14,165,233,0.25);
+  --amber:   #f59e0b;
+  --amber-dim: rgba(245,158,11,0.15);
+  --emerald: #10b981;
+  --emerald-dim: rgba(16,185,129,0.15);
+  --red:     #ef4444;
+  --red-dim: rgba(239,68,68,0.15);
+
+  /* Text */
+  --text-primary:   #f0f6ff;
+  --text-secondary: #7a9cc0;
+  --text-muted:     #3d5a7a;
+
+  /* Typography */
+  --font-sans: 'DM Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+
+  /* Transitions */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg-0);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-1); }
+::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 2px; }
+
+/* Selection */
+::selection { background: var(--blue-dim); color: var(--blue); }
+
+/* Utility classes */
+.mono { font-family: var(--font-mono); }
+.text-muted { color: var(--text-secondary); }
+
+/* Reusable card */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.card:hover {
+  border-color: var(--border-default);
+  transition: border-color 0.2s var(--ease);
+}
+
+/* Status badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.badge-blue    { background: var(--blue-dim);    color: var(--blue);    border: 1px solid rgba(14,165,233,0.2); }
+.badge-amber   { background: var(--amber-dim);   color: var(--amber);   border: 1px solid rgba(245,158,11,0.2); }
+.badge-emerald { background: var(--emerald-dim); color: var(--emerald); border: 1px solid rgba(16,185,129,0.2); }
+.badge-red     { background: var(--red-dim);     color: var(--red);     border: 1px solid rgba(239,68,68,0.2); }
+.badge-muted   { background: var(--bg-3);        color: var(--text-secondary); border: 1px solid var(--border-subtle); }
+
+/* Pulse dot */
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.85); }
+}
+.pulse-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  animation: pulse 1.8s ease-in-out infinite;
+}
+
+/* Button base */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s var(--ease);
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--blue);
+  color: #fff;
+}
+.btn-primary:hover {
+  background: #38bdf8;
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-default);
+}
+.btn-ghost:hover {
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+  background: var(--bg-2);
+}
+
+.btn-danger {
+  background: var(--red-dim);
+  color: var(--red);
+  border: 1px solid rgba(239,68,68,0.2);
+}
