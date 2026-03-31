@@ -6,6 +6,8 @@ import uuid
 from app.services.supabase_client import supabase
 from app.services.document_parser import extract_text
 from app.pipelines.campaign_pipeline import run_campaign
+from app.features.remix import run_remix
+from app.features.audience_sim import run_audience_simulation
 
 app = FastAPI(title="Autonomous Content Factory", version="0.1.0")
 
@@ -93,6 +95,31 @@ def autofix_campaign(campaign_id: str):
     """
     try:
         result = run_autofix(campaign_id)
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/campaign/{campaign_id}/remix")
+def remix_campaign(campaign_id: str, body: dict):
+    """
+    Transforms blog post into creative alternative formats.
+    body should contain: {"mode": "meme"|"story"|"viral_hook"|"minimal"|"all"}
+    """
+    mode = body.get("mode", "all")
+    try:
+        result = run_remix(campaign_id, mode)
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.get("/api/campaign/{campaign_id}/reactions")
+def get_reactions(campaign_id: str):
+    """
+    Simulates audience reactions from developer, CEO, and student personas.
+    """
+    try:
+        result = run_audience_simulation(campaign_id)
         return result
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
