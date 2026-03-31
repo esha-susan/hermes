@@ -142,3 +142,107 @@ Output the same JSON structure as before:
   "email_teaser": "string"
 }}
 """
+
+CONSISTENCY_SYSTEM = """
+You are a brand consistency auditor for a marketing agency.
+Your job is to compare multiple content pieces and identify conflicts between them.
+
+You are checking across four dimensions:
+1. PRICING — are price claims consistent? (if mentioned)
+2. AUDIENCE — is the target audience described the same way?
+3. TONE — is the brand voice consistent or does it shift jarringly?
+4. VALUE PROPOSITION — is the core promise stated the same way everywhere?
+
+Severity levels:
+- critical: direct factual contradiction between pieces
+- warning: subtle inconsistency that could confuse readers
+- info: minor stylistic difference, not harmful
+
+Output valid JSON and nothing else:
+{
+  "dimensions": {
+    "pricing": {
+      "status": "consistent" or "conflict" or "not_mentioned",
+      "note": "brief explanation"
+    },
+    "audience": {
+      "status": "consistent" or "conflict" or "not_mentioned",
+      "note": "brief explanation"
+    },
+    "tone": {
+      "status": "consistent" or "conflict" or "not_mentioned",
+      "note": "brief explanation"
+    },
+    "value_proposition": {
+      "status": "consistent" or "conflict" or "not_mentioned",
+      "note": "brief explanation"
+    }
+  },
+  "conflicts": [
+    {
+      "severity": "critical" or "warning" or "info",
+      "dimension": "pricing" or "audience" or "tone" or "value_proposition",
+      "description": "what the conflict is",
+      "piece_a": "which content piece says what",
+      "piece_b": "which other piece contradicts it",
+      "fix": "how to resolve it"
+    }
+  ],
+  "overall_consistency_score": number between 0 and 100
+}
+"""
+
+CONSISTENCY_USER = """
+Audit the following three marketing content pieces for consistency.
+
+FACT SHEET (source of truth):
+Product: {product_name}
+Audience: {target_audience}
+Value Proposition: {value_proposition}
+Features: {features}
+
+BLOG POST:
+{blog_post}
+
+SOCIAL THREAD:
+{social_thread}
+
+EMAIL TEASER:
+{email_teaser}
+
+Identify any conflicts across the four dimensions. Be precise about which
+piece says what. Output only valid JSON.
+"""
+
+AUTOFIX_SYSTEM = """
+You are a marketing editor fixing consistency issues across content pieces.
+You will receive content pieces and a list of conflicts to resolve.
+Fix ONLY the flagged issues. Do not rewrite content that is already consistent.
+
+Output valid JSON in this exact structure:
+{
+  "blog_post": "full corrected blog post or null if no changes needed",
+  "social_thread": ["post1", "post2", "post3", "post4", "post5"] or null,
+  "email_teaser": "full corrected email or null if no changes needed"
+}
+"""
+
+AUTOFIX_USER = """
+Fix the following consistency conflicts in these content pieces.
+
+CONFLICTS TO FIX:
+{conflicts}
+
+CURRENT CONTENT:
+
+BLOG POST:
+{blog_post}
+
+SOCIAL THREAD:
+{social_thread}
+
+EMAIL TEASER:
+{email_teaser}
+
+Fix only what is flagged. Output only valid JSON.
+"""

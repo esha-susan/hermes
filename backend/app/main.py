@@ -72,3 +72,27 @@ def get_campaign(campaign_id: str):
         raise HTTPException(status_code=404, detail="Campaign not found")
 
     return result.data[0]
+
+from app.features.consistency import run_consistency_check, run_autofix
+
+
+@app.get("/api/campaign/{campaign_id}/consistency")
+def get_consistency(campaign_id: str):
+   
+    try:
+        report = run_consistency_check(campaign_id)
+        return report
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/api/campaign/{campaign_id}/autofix")
+def autofix_campaign(campaign_id: str):
+    """
+    Automatically fixes consistency conflicts found in the report.
+    """
+    try:
+        result = run_autofix(campaign_id)
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
