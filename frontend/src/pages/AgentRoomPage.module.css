@@ -1,0 +1,171 @@
+/* src/pages/AgentRoomPage.module.css */
+
+.page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 40px 20px;
+  }
+  
+  .grid {
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(14,165,233,0.06) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+  }
+  
+  .container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+  
+  .header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    text-align: center;
+  }
+  
+  .title {
+    font-size: 32px;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+  }
+  
+  .statusText {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  
+  .agents {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  
+  .card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 24px;
+    border-radius: 12px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-card);
+    transition: all 0.3s var(--ease);
+    animation: cardIn 0.4s var(--ease) both;
+  }
+  
+  .idle {
+    opacity: 0.45;
+  }
+  
+  .active {
+    border-color: var(--blue);
+    background: linear-gradient(135deg, var(--bg-card) 0%, rgba(14,165,233,0.06) 100%);
+    opacity: 1;
+  }
+  
+  .done {
+    border-color: rgba(16,185,129,0.25);
+    opacity: 0.8;
+  }
+  
+  .cardLeft { position: relative; flex-shrink: 0; }
+  
+  .iconWrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: var(--bg-2);
+    border: 1px solid var(--border-default);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    position: relative;
+  }
+  
+  .active .iconWrap {
+    background: var(--blue-dim);
+    border-color: rgba(14,165,233,0.3);
+    color: var(--blue);
+  }
+  
+  .done .iconWrap {
+    background: var(--emerald-dim);
+    border-color: rgba(16,185,129,0.3);
+    color: var(--emerald);
+  }
+  
+  @keyframes ping {
+    0%   { transform: scale(1);   opacity: 0.6; }
+    100% { transform: scale(2.2); opacity: 0; }
+  }
+  
+  .activePing {
+    position: absolute;
+    inset: -1px;
+    border-radius: 10px;
+    border: 1px solid var(--blue);
+    animation: ping 1.4s ease-out infinite;
+  }
+  
+  .cardBody { flex: 1; }
+  
+  .cardHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  
+  .agentLabel {
+    font-size: 15px;
+    font-weight: 500;
+  }
+  
+  .agentRole {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  
+  .errorBox {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: var(--red-dim);
+    border: 1px solid rgba(239,68,68,0.2);
+    border-radius: 10px;
+    color: var(--red);
+    font-size: 14px;
+  }
+  
+  .progressTrack {
+    height: 2px;
+    background: var(--bg-3);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  
+  .progressFill {
+    height: 100%;
+    background: var(--blue);
+    border-radius: 2px;
+    transition: width 0.6s var(--ease);
+  }
