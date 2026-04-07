@@ -11,8 +11,10 @@ from app.features.audience_sim import run_audience_simulation
 from pydantic import BaseModel
 
 app = FastAPI(title="Autonomous Content Factory", version="0.1.0")
+
 origins = [
-    "http://localhost:5173",
+    "http://localhost:3000",                # local dev
+    "https://hermesfrontend.vercel.app"    # Vercel frontend (use your exact Vercel URL)
 ]
 app.add_middleware(
     CORSMiddleware,
