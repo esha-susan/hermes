@@ -4,16 +4,19 @@ from fastapi.middleware.cors import CORSMiddleware
 import uuid
 
 from app.services.supabase_client import supabase
-from app.services.document_parser import extract_text
+from app.services.document_parser import extract_text, extract_from_url
 from app.pipelines.campaign_pipeline import run_campaign
 from app.features.remix import run_remix
 from app.features.audience_sim import run_audience_simulation
+from pydantic import BaseModel
 
 app = FastAPI(title="Autonomous Content Factory", version="0.1.0")
-
+origins = [
+    "http://localhost:5173",
+]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -29,15 +32,7 @@ async def start_campaign(
     background_tasks: BackgroundTasks,
     file: UploadFile = File(...)
 ):
-    """
-    Accepts a file upload, creates a campaign record,
-    then runs the agent pipeline in the background.
-
-    WHY background_tasks: The pipeline takes 10-30 seconds.
-    We don't want the HTTP request to hang — instead we return
-    the campaign ID immediately and let the frontend poll for status.
-    """
-
+ 
     file_bytes = await file.read()
 
     try:
@@ -123,3 +118,33 @@ def get_reactions(campaign_id: str):
         return result
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+    
+class URLRequest(BaseModel):
+    url: str
+
+@app.post("/api/campaign/start-from-url")
+async def start_campaign_from_url(
+    background_tasks: BackgroundTasks,
+    body: URLRequest
+):
+    """
+    Same as start_campaign but accepts a URL instead of a file.
+    Directly addresses the problem statement requirement.
+    """
+    try:
+        source_text = extract_from_url(body.url)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Could not fetch URL: {str(e)}")
+
+    if not source_text.strip():
+        raise HTTPException(status_code=400, detail="No readable content found at URL.")
+
+    campaign_id = str(uuid.uuid4())
+    supabase.table("campaigns").insert({
+        "id": campaign_id,
+        "status": "pending",
+        "source_text": source_text
+    }).execute()
+
+    background_tasks.add_task(run_campaign, campaign_id, source_text)
+    return {"id": campaign_id, "status": "pending"}

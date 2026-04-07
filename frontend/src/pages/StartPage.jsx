@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Upload, FileText, Zap } from 'lucide-react'
-import { startCampaign } from '../services/api'
+import { Upload, FileText, Zap, Globe } from 'lucide-react'
+import api,{ startCampaign } from '../services/api'
 import { useCampaignStore } from '../store/campaignStore'
 import styles from './StartPage.module.css'
 
@@ -13,6 +13,8 @@ export default function StartPage() {
   const [loading, setLoading]     = useState(false)
   const [error, setError]         = useState(null)
   const fileInputRef = useRef(null)
+  const [inputMode, setInputMode] = useState('file')
+  const [url, setUrl] = useState('')
 
   const handleFile = (f) => {
     const allowed = ['.txt', '.pdf', '.docx']
@@ -33,19 +35,27 @@ export default function StartPage() {
   }
 
   const handleSubmit = async () => {
-    if (!file) return
     setLoading(true)
     setError(null)
     reset()
-
+  
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-      const res = await startCampaign(formData)
+      let res
+      if (inputMode === 'file' && file) {
+        const formData = new FormData()
+        formData.append('file', file)
+        res = await startCampaign(formData)
+      } else if (inputMode === 'url' && url) {
+        res = await api.post('/api/campaign/start-from-url', { url })
+      } else {
+        setError('Please provide a file or URL.')
+        setLoading(false)
+        return
+      }
       setCampaignId(res.data.id)
       navigate('/agents')
     } catch (err) {
-      setError('Failed to start campaign. Is the backend running?')
+      setError(err.response?.data?.detail || 'Failed to start campaign.')
       setLoading(false)
     }
   }
@@ -74,7 +84,36 @@ export default function StartPage() {
             research, write, and edit your entire marketing campaign.
           </p>
         </div>
+        <div className={styles.modeToggle}>
+  <button
+    className={`${styles.modeBtn} ${inputMode === 'file' ? styles.modeBtnActive : ''}`}
+    onClick={() => setInputMode('file')}
+  >
+    <Upload size={14} />
+    Upload File
+  </button>
+  <button
+    className={`${styles.modeBtn} ${inputMode === 'url' ? styles.modeBtnActive : ''}`}
+    onClick={() => setInputMode('url')}
+  >
+    <Globe size={14} />
+    From URL
+  </button>
+</div>
 
+
+{inputMode === 'url' && (
+  <div className={styles.urlInput}>
+    <Globe size={18} strokeWidth={1.5} color="var(--text-muted)" />
+    <input
+      type="url"
+      placeholder="https://yourproduct.com/features"
+      value={url}
+      onChange={(e) => setUrl(e.target.value)}
+      className={styles.urlField}
+    />
+  </div>
+)}
         {/* Upload area */}
         <div
           className={`${styles.dropzone} ${dragging ? styles.dragging : ''} ${file ? styles.hasFile : ''}`}
@@ -119,7 +158,11 @@ export default function StartPage() {
         <button
           className={`btn btn-primary ${styles.launchBtn}`}
           onClick={handleSubmit}
-          disabled={!file || loading}
+          disabled={
+            loading ||
+            (inputMode === 'file' && !file) ||
+            (inputMode === 'url' && !url)
+          }
         >
           {loading ? (
             <>

@@ -163,3 +163,60 @@
   .chip {
     font-size: 11px;
   }
+  .modeToggle {
+    display: flex;
+    gap: 8px;
+    background: var(--bg-card);
+    padding: 4px;
+    border-radius: 10px;
+    border: 1px solid var(--border-subtle);
+    width: 100%;
+  }
+  
+  .modeBtn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 7px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-family: var(--font-sans);
+    cursor: pointer;
+    transition: all 0.15s var(--ease);
+  }
+  
+  .modeBtnActive {
+    background: var(--bg-2);
+    color: var(--text-primary);
+    border: 1px solid var(--border-default);
+  }
+  
+  .urlInput {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-default);
+    border-radius: 12px;
+  }
+  
+  .urlField {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: var(--font-mono);
+  }
+  
+  .urlField::placeholder {
+    color: var(--text-muted);
+  }

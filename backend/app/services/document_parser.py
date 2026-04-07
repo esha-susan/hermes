@@ -1,6 +1,8 @@
 import PyPDF2
 import docx
 import io
+import urllib.request
+from html.parser import HTMLParser
 
 def extract_text(file_bytes: bytes, filename: str) -> str:
   
@@ -25,3 +27,37 @@ def _parse_docx(file_bytes: bytes) -> str:
     doc = docx.Document(io.BytesIO(file_bytes))
     paragraphs = [para.text for para in doc.paragraphs]
     return '\n'.join(p for p in paragraphs if p and p.strip())
+
+class TextExtractor(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.text = []
+        self.skip_tags = {'script', 'style', 'nav', 'footer', 'header'}
+        self.current_skip = False
+
+    def handle_starttag(self, tag, attrs):
+        if tag in self.skip_tags:
+            self.current_skip = True
+
+    def handle_endtag(self, tag):
+        if tag in self.skip_tags:
+            self.current_skip = False
+
+    def handle_data(self, data):
+        if not self.current_skip and data.strip():
+            self.text.append(data.strip())
+
+def extract_from_url(url: str) -> str:
+    
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    req = urllib.request.Request(url, headers=headers)
+    
+    with urllib.request.urlopen(req, timeout=10) as response:
+        html = response.read().decode('utf-8', errors='ignore')
+    
+    parser = TextExtractor()
+    parser.feed(html)
+    
+    text = ' '.join(parser.text)
+    
+    return text[:8000]
