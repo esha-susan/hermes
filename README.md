@@ -85,7 +85,7 @@ Build a multi-agent system that:
 
 ```bash
 # Clone the repository
-git clone <your-repo-url>
+git clone https://github.com/esha-susan/hermes.git
 cd Hermes
 
 # Backend setup
